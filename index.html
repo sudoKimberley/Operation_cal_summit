@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sonder-Freigabe: Operation Berg</title>
+<style>
+body {
+margin: 0;
+padding: 0;
+background: linear-gradient(to bottom, #1a2a6c, #b21f1f, #fdbb2d);
+font-family: 'Courier New', Courier, monospace;
+overflow: hidden;
+height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+color: #fff;
+}
+.terminal {
+background: rgba(10, 15, 30, 0.95);
+border: 2px solid #00ffcc;
+box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
+border-radius: 10px;
+padding: 20px;
+width: 90%;
+max-width: 450px;
+z-index: 10;
+box-sizing: border-box;
+}
+h1 { color: #00ffcc; font-size: 1.2rem; margin-top: 0; border-bottom: 1px solid #333; padding-bottom: 10px; }
+p { font-size: 0.95rem; line-height: 1.4; color: #e0e0e0; margin: 5px 0; }
+.code-line { color: #ff007f; font-weight: bold; }
+.comment { color: #757575; font-style: italic; }
+
+.progress-container { margin: 15px 0; color: #00ffcc; font-weight: bold; display: none; }
+.progress-bar { display: inline-block; width: 0; overflow: hidden; white-space: nowrap; }
+.animate-bar { animation: loadBar 1.5s steps(10) forwards; }
+.cursor { animation: blink 1s infinite; color: #00ffcc; }
+.system-result { display: none; }
+
+@keyframes loadBar { from { width: 0; } to { width: 140px; } }
+@keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+.mountain-range {
+position: absolute;
+bottom: 0;
+width: 100%;
+height: 40vh;
+z-index: 1;
+opacity: 0;
+transition: opacity 2s ease;
+}
+.mountain { position: absolute; bottom: 0; border-left: solid transparent; border-right: solid transparent; }
+.mount-bg1 { left: 10%; border-left-width: 20vw; border-right-width: 20vw; border-bottom: 25vh solid #2c3e50; }
+.mount-bg2 { right: 15%; border-left-width: 25vw; border-right-width: 25vw; border-bottom: 22vh solid #1a252f; }
+
+.main-slope {
+position: absolute;
+bottom: -50px;
+left: -10%;
+width: 120%;
+height: 200px;
+background: #34495e;
+transform: rotate(8deg);
+transform-origin: left bottom;
+z-index: 2;
+}
+
+.summit-cross {
+position: absolute;
+right: 25%;
+bottom: 14vh;
+width: 6px;
+height: 45px;
+background-color: #f1c40f;
+z-index: 3;
+box-shadow: 0 0 10px #f1c40f;
+}
+.summit-cross::after { content: ''; position: absolute; top: 12px; left: -12px; width: 30px; height: 6px; background-color: #f1c40f; }
+
+.walking-group {
+position: absolute;
+bottom: -25px;
+left: -150px;
+display: flex;
+align-items: flex-end;
+gap: 10px;
+z-index: 5;
+transform: rotate(8deg);
+transform-origin: left bottom;
+display: none;
+}
+
+.animate-walk {
+display: flex;
+animation: climbToSummit 8s ease-out forwards;
+}
+
+.walker { animation: hikingMotion 0.6s ease-in-out infinite alternate; }
+.celebrate { animation: summitJump 0.4s ease-in-out infinite alternate !important; }
+
+.human { width: 16px; height: 42px; background-color: #e67e22; border-radius: 6px 6px 0 0; }
+.human.two { background-color: #3498db; animation-delay: 0.15s; }
+.dog { width: 22px; height: 14px; background-color: #f1c40f; border-radius: 3px; position: relative; animation-delay: 0.3s; }
+.dog::after { content: ''; position: absolute; bottom: 8px; left: -3px; width: 4px; height: 4px; background: inherit; border-radius: 50%; }
+.dog.two { background-color: #d35400; animation-delay: 0.45s; }
+
+@keyframes climbToSummit {
+0% { left: -150px; bottom: -22px; }
+100% { left: 62vw; bottom: 62px; }
+}
+
+@keyframes hikingMotion {
+0% { transform: translateY(0) rotate(3deg); }
+100% { transform: translateY(-8px) rotate(8deg); }
+}
+
+@keyframes summitJump {
+0% { transform: translateY(0) scaleY(1); }
+100% { transform: translateY(-15px) scaleY(0.95); }
+}
+
+.btn-container { margin-top: 15px; display: flex; flex-direction: column; gap: 8px; }
+.btn { background: #222; border: 1px solid #00ffcc; color: #00ffcc; padding: 10px; font-family: inherit; font-size: 0.9rem; cursor: pointer; border-radius: 4px; font-weight: bold; }
+.btn:hover { background: #00ffcc; color: #000; }
+.hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div id="step1" class="terminal">
+<h1>[SYSTEM] Initialisiere Check...</h1>
+<p id="line1"></p>
+<p id="line2"></p>
+
+<div id="pBarContainer" class="progress-container">
+Status: <span id="pBar" class="progress-bar">[||||||||||] 100%</span>
+</div>
+
+<div id="resultArea" class="system-result">
+<p class="comment" style="color: #00ffcc;">// REBOOT ERFORDERLICH:</p>
+<p><strong>Check Kalender: E. ist im Schullandheim</strong> 🚌⛺️</p>
+<p>Ein seltenes, freies Zeitfenster wurde für die Userin detektiert<span class="cursor">_</span></p>
+<div class="btn-container">
+<button class="btn" onclick="nextStep()">[ Log-Datei lesen ]</button>
+</div>
+</div>
+</div>
+
+<div id="step2" class="terminal hidden">
+<h1>Griaßdi H.! 🏔️</h1>
+<p>Das System meldet für <strong>Dienstag (06.10.)</strong> stabiles Bergwetter.</p>
+<p>Ich nutze die Gunst der Stunde für eine Bergtour (Klammspitze oder Alternative).</p>
+<p><strong>K. und ich würden uns riesig freuen, wenn das Hundeteam H. & B. mitkommt, falls ihr Lust auf einen entspannten Tag habt – völlig ohne Druck!</strong> 🐾</p>
+<p class="comment">// Spontaner Urlaubsantrag optional. Alles kann, nix muss.</p>
+
+<div class="btn-container">
+<button class="btn" style="border-color: #2ecc71; color: #2ecc71;" onclick="respond(true)">sudo apt-get install tour (Wäre cool!)</button>
+<button class="btn" style="border-color: #e74c3c; color: #e74c3c;" onclick="respond(false)">exit (Passt diesmal nicht)</button>
+</div>
+</div>
+
+<div id="mountains" class="mountain-range">
+<div class="mountain mount-bg1"></div>
+<div class="mountain mount-bg2"></div>
+<div class="main-slope"></div>
+<div class="summit-cross"></div>
+</div>
+
+<div id="walkers" class="walking-group">
+<div id="w1" class="dog walker"></div>
+<div id="w2" class="human walker"></div>
+<div id="w3" class="human walker two"></div>
+<div id="w4" class="dog walker two"></div>
+</div>
+
+<script>
+// Das Apostroph bei G'scheits wurde hier mit einem Backslash maskiert:
+const text1 = '// Standard-Modus: Unter der Woche kann ich eigentlich selten was Gscheits machen';
+const text2 = 'if (wochentag == "Dienstag") { return "Keine Zeit, Alltagsverpflichtungen!"; }';
+
+let i = 0; let j = 0;
+
+function typeWriter() {
+if (i < text1.length) {
+document.getElementById("line1").innerHTML += text1.charAt(i);
+document.getElementById("line1").className = "comment";
+i++;
+setTimeout(typeWriter, 25);
+} else if (j < text2.length) {
+document.getElementById("line2").innerHTML += text2.charAt(j);
+j++;
+setTimeout(typeWriter, 25);
+} else {
+document.getElementById("pBarContainer").style.display = "block";
+document.getElementById("pBar").classList.add("animate-bar");
+setTimeout(() => {
+document.getElementById("resultArea").style.display = "block";
+}, 1500);
+}
+}
+
+window.onload = typeWriter;
+
+function nextStep() {
+document.getElementById('step1').classList.add('hidden');
+document.getElementById('step2').classList.remove('hidden');
+document.body.style.background = "linear-gradient(to bottom, #87CEEB, #E0F6FF)";
+document.getElementById('mountains').style.opacity = "1";
+
+const walkers = document.getElementById('walkers');
+walkers.classList.add('animate-walk');
+
+setTimeout(() => {
+document.getElementById('w1').className = "dog celebrate";
+document.getElementById('w2').className = "human celebrate";
+document.getElementById('w3').className = "human celebrate two";
+document.getElementById('w4').className = "dog celebrate two";
+
+setInterval(() => {
+resetAndWalkAgain();
+}, 14000);
+}, 8000);
+}
+
+function resetAndWalkAgain() {
+const walkers = document.getElementById('walkers');
+walkers.classList.remove('animate-walk');
+
+document.getElementById('w1').className = "dog walker";
+document.getElementById('w2').className = "human walker";
+document.getElementById('w3').className = "human walker two";
+document.getElementById('w4').className = "dog walker two";
+
+setTimeout(() => {
+walkers.classList.add('animate-walk');
+setTimeout(() => {
+document.getElementById('w1').className = "dog celebrate";
+document.getElementById('w2').className = "human celebrate";
+document.getElementById('w3').className = "human celebrate two";
+document.getElementById('w4').className = "dog celebrate two";
+}, 8000);
+}, 100);
+}
+
+function respond(accepted) {
+if(accepted) {
+alert("Sehr schön! Wenn es klappt, planen wir den Release ganz entspannt für Dienstag früh. 🚀");
+} else {
+alert("Kein Problem! Das System bleibt im Standby. Wir drehen einfach ein andermal eine Runde! ☀️🐾");
+}
+}
+</script>
+</body>
+</html>
